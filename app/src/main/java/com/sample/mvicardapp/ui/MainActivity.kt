@@ -1,4 +1,4 @@
-package com.sample.mvicardapp
+package com.sample.mvicardapp.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

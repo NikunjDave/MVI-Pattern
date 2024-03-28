@@ -11,6 +11,11 @@ dependencyResolutionManagement {
 		google()
 		mavenCentral()
 	}
+	versionCatalogs {
+		create("versions") {
+			from(files("gradle/libs.versions.toml"))
+		}
+	}
 }
 
 rootProject.name = "mvicardapp"

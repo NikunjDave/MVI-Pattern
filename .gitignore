@@ -16,7 +16,5 @@ local.properties
 
 # Gradle files
 .gradle/
-gradle/
 /.idea/
-/gradlew
-/gradlew.bat
+
