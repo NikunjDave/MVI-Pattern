@@ -36,6 +36,7 @@ android {
 		jvmTarget = "1.8"
 	}
 	buildFeatures {
+		buildConfig = true
 		compose = true
 	}
 	composeOptions {
@@ -76,6 +77,7 @@ dependencies {
 	// Retrofit
 	implementation(libs.retrofit)
 	implementation(libs.converter.moshi)
+	implementation(libs.converter.gson)
 	implementation (libs.logging.interceptor)
 	annotationProcessor(libs.hilt.android)
 	implementation(libs.androidx.navigation.compose)
