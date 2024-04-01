@@ -29,7 +29,8 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(onLoginSuccess :() -> Unit) {
+	println("Login screen")
 	val loginViewModel: LoginViewModel = hiltViewModel()
 	val loginState = loginViewModel.loginStateFlow.collectAsState()
 	val coroutineScope = rememberCoroutineScope()
@@ -51,13 +52,14 @@ fun LoginScreen() {
 			}
 
 			is LoginState.ResultError -> {
-				println("error called")
+				println("error is ${(loginState.value as LoginState.ResultError).error}")
 			}
 
 			else -> {}
 		}
 		LoginCardWithButton { credentials ->
 			coroutineScope.launch {
+				onLoginSuccess()
 				loginViewModel.loginIntent.send(LoginIntent.Login(credentials.first, credentials.second))
 			}
 		}

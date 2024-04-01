@@ -50,8 +50,6 @@ class LoginViewModel @Inject constructor(
 	private val _loginStateFlow = MutableStateFlow<LoginState?>(null)
 	val loginStateFlow = _loginStateFlow.asStateFlow()
 	private fun login(userName: String, password: String) {
-		println("user name is $userName")
-		println("password is $password")
 		viewModelScope.launch {
 			_loginStateFlow.emit(LoginState.Loading)
 			withContext(Dispatchers.IO) {
