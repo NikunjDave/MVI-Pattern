@@ -14,6 +14,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -33,6 +34,11 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
 	val loginViewModel: LoginViewModel = mavericksViewModel()
 	val loginState = loginViewModel.collectAsState()
 	val coroutineScope = rememberCoroutineScope()
+	DisposableEffect(Unit){
+		onDispose {
+			loginViewModel.resetLoginState()
+		}
+	}
 	Box(modifier = Modifier) {
 		when {
 			loginState.value.isLoading -> {
@@ -41,19 +47,19 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
 				)
 			}
 			loginState.value.userDetail != null -> {
-				Toast.makeText(
-					LocalContext.current, "User is ${loginState.value.userDetail?.fullName}",
-					Toast.LENGTH_SHORT
-				).show()
+				onLoginSuccess()
 			}
 			loginState.value.error.isNotEmpty() -> {
-				println("Error is ${loginState.value.error}")
+				Toast.makeText(
+					LocalContext.current, loginState.value.error,
+					Toast.LENGTH_SHORT
+				).show()
+
 			}
 		}
 		LoginCardWithButton { credentials ->
 			coroutineScope.launch {
-				onLoginSuccess()
-				loginViewModel.loginIntent.send(LoginIntent.Login(credentials.first, credentials.second))
+				loginViewModel.login(credentials.first, credentials.second)
 			}
 		}
 	}
