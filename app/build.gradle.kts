@@ -83,4 +83,7 @@ dependencies {
 	implementation(libs.androidx.navigation.compose)
 	implementation(libs.androidx.hilt.navigation.compose)
 	implementation(libs.datastore)
+	implementation(libs.mavericks)
+	implementation(libs.mavericks.compose)
+	implementation(libs.mavericks.hilt)
 }

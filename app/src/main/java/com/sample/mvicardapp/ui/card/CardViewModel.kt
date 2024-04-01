@@ -1,17 +1,17 @@
 package com.sample.mvicardapp.ui.card
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.sample.mvicardapp.data.local.CardPrefs
+import com.airbnb.mvrx.MavericksViewModel
+import com.airbnb.mvrx.MavericksViewModelFactory
+import com.airbnb.mvrx.hilt.AssistedViewModelFactory
+import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.sample.mvicardapp.domain.CardRepository
 import com.sample.mvicardapp.domain.SelectedCard
-import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 /***
  * Created by Nikunj Dave on 01/04/24
@@ -21,13 +21,12 @@ import javax.inject.Inject
  * Copyright(c) 2024 mvicardapp.
  * All rights reserved.
  */
-@HiltViewModel
-class CardViewModel @Inject constructor(
-	private val repository: CardRepository
-) : ViewModel() {
+class CardViewModel @AssistedInject constructor(
+	private val repository: CardRepository,
+	@Assisted private val cardState: CardState
+) : MavericksViewModel<CardState>(cardState) {
 
 	val cardIntent = Channel<CardIntent>(Channel.UNLIMITED)
-
 	init {
 		handleIntent()
 	}
@@ -45,17 +44,20 @@ class CardViewModel @Inject constructor(
 		}
 	}
 
-	private val _cardStateFlow = MutableStateFlow<CardState?>(null)
-
-	val cardStateFlow = _cardStateFlow.asStateFlow()
-
 	private fun fetchCardList() {
 		viewModelScope.launch {
-			_cardStateFlow.emit(CardState.Loading)
+			setState { copy(isLoading = true) }
 			repository.fetchCards().also {
-				_cardStateFlow.emit(CardState.ResultCardList(it))
+				setState { copy(isLoading = false,cards = it) }
 			}
 		}
 	}
+
+	@AssistedFactory
+	interface Factory : AssistedViewModelFactory<CardViewModel, CardState> {
+		override fun create(state: CardState): CardViewModel
+	}
+
+	companion object : MavericksViewModelFactory<CardViewModel, CardState> by hiltMavericksViewModelFactory()
 
 }

@@ -1,6 +1,6 @@
 # Android-MVI-SAMPLE
 
-News app using [News API](https://newsapi.org/v2/everything?q=bitcoin&apiKey={}) built with jetpack Compose and Clean + MVI architecture.<br>
+Card app built with jetpack Compose and Clean + MVI architecture.
 
 # Main Features
 - Demonstrate the MVI pattern following clean architecture pattern

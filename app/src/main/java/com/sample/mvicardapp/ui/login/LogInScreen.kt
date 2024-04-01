@@ -15,7 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -24,37 +23,32 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.airbnb.mvrx.compose.collectAsState
+import com.airbnb.mvrx.compose.mavericksViewModel
 import kotlinx.coroutines.launch
 
 
 @Composable
-fun LoginScreen(onLoginSuccess :() -> Unit) {
-	println("Login screen")
-	val loginViewModel: LoginViewModel = hiltViewModel()
-	val loginState = loginViewModel.loginStateFlow.collectAsState()
+fun LoginScreen(onLoginSuccess: () -> Unit) {
+	val loginViewModel: LoginViewModel = mavericksViewModel()
+	val loginState = loginViewModel.collectAsState()
 	val coroutineScope = rememberCoroutineScope()
 	Box(modifier = Modifier) {
-		when (loginState.value) {
-			is LoginState.Loading -> {
+		when {
+			loginState.value.isLoading -> {
 				CircularProgressIndicator(
 					modifier = Modifier.align(Alignment.Center)
 				)
 			}
-
-			is LoginState.ResultUserDetail -> {
+			loginState.value.userDetail != null -> {
 				Toast.makeText(
-					LocalContext.current,
-					"user is ${(loginState.value as LoginState.ResultUserDetail).data.fullName}",
+					LocalContext.current, "User is ${loginState.value.userDetail?.fullName}",
 					Toast.LENGTH_SHORT
 				).show()
 			}
-
-			is LoginState.ResultError -> {
-				println("error is ${(loginState.value as LoginState.ResultError).error}")
+			loginState.value.error.isNotEmpty() -> {
+				println("Error is ${loginState.value.error}")
 			}
-
-			else -> {}
 		}
 		LoginCardWithButton { credentials ->
 			coroutineScope.launch {
@@ -137,24 +131,5 @@ private fun InputBox(
 		singleLine = true,
 		enabled = true
 	)
-}
-
-@Composable
-private fun MyButton(
-	text: String,
-	onClick: () -> Unit
-) {
-	Button(
-		onClick = onClick,
-		modifier = Modifier
-			.wrapContentSize()
-			.padding(8.dp),
-		colors = ButtonDefaults.buttonColors(
-			containerColor = Color.Blue,
-			contentColor = Color.White
-		)
-	) {
-		Text(text = text)
-	}
 }
 

@@ -20,6 +20,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.airbnb.mvrx.compose.collectAsState
+import com.airbnb.mvrx.compose.mavericksViewModel
 import com.sample.mvicardapp.domain.model.CardDetail
 import kotlinx.coroutines.launch
 
@@ -34,33 +36,30 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun CardListScreen() {
-	val cardViewModel: CardViewModel = hiltViewModel()
-	val cardState = cardViewModel.cardStateFlow.collectAsState()
+	val cardViewModel: CardViewModel = mavericksViewModel()
+	val cardState = cardViewModel.collectAsState()
 	val coroutineScope = rememberCoroutineScope()
 
 	coroutineScope.launch {
 		cardViewModel.cardIntent.send(CardIntent.FetchCard)
 	}
 	Box(modifier = Modifier) {
-		when (cardState.value) {
-			is CardState.Loading -> CircularProgressIndicator(
+		when {
+			cardState.value.isLoading -> CircularProgressIndicator(
 				modifier = Modifier.align(Alignment.Center)
 			)
 
-			is CardState.ResultCardList -> {
-				CardList(cards = (cardState.value as CardState.ResultCardList).cards, onCardClick = {
+			cardState.value.cards.isNotEmpty() -> {
+				CardList(cards = cardState.value.cards, onCardClick = {
 					coroutineScope.launch {
 						cardViewModel.cardIntent.send(CardIntent.SelectCard(it))
 					}
 				})
 			}
 
-			is CardState.ResultError -> {
-				println("Error : ${(cardState.value as CardState.ResultError).error}")
+			cardState.value.error.isNotEmpty() -> {
+				println("Error : ${cardState.value.error}")
 			}
-
-			else -> {}
-
 		}
 	}
 }
