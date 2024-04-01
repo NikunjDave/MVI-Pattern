@@ -31,7 +31,6 @@ class LoginViewModel @Inject constructor(
 	private val repository: LoginRepository
 ) : ViewModel() {
 
-
 	val loginIntent = Channel<LoginIntent>(Channel.UNLIMITED)
 
 	init {
@@ -41,8 +40,8 @@ class LoginViewModel @Inject constructor(
 	private fun handleIntent() {
 		viewModelScope.launch {
 			loginIntent.consumeAsFlow().collect {
-				when(it){
-					is LoginIntent.Login -> login(it.userName,it.password)
+				when (it) {
+					is LoginIntent.Login -> login(it.userName, it.password)
 				}
 			}
 		}
@@ -50,7 +49,7 @@ class LoginViewModel @Inject constructor(
 
 	private val _loginStateFlow = MutableStateFlow<LoginState?>(null)
 	val loginStateFlow = _loginStateFlow.asStateFlow()
-	private fun login(userName: String,password : String) {
+	private fun login(userName: String, password: String) {
 		println("user name is $userName")
 		println("password is $password")
 		viewModelScope.launch {
@@ -59,11 +58,9 @@ class LoginViewModel @Inject constructor(
 				repository.login(userName, password).also { response ->
 					when (response) {
 						is Success -> _loginStateFlow.emit(LoginState.ResultUserDetail(response.value.user.toUser()))
-
 						is Error -> _loginStateFlow.emit(LoginState.ResultError(response.message.orEmpty()))
 					}
 				}
-
 			}
 		}
 	}

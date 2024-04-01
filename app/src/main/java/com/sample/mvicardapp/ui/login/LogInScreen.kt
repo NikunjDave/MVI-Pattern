@@ -14,9 +14,9 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,8 +26,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.launch
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 
 
 @Composable
@@ -63,28 +61,23 @@ fun LoginScreen() {
 				loginViewModel.loginIntent.send(LoginIntent.Login(credentials.first, credentials.second))
 			}
 		}
-
 	}
-
 }
 
 
 @Composable
-private fun LoginCardWithButton(onLoginClick : (Pair<String,String>) -> Unit) {
-	var userNamePassword by remember { mutableStateOf(Pair("","")) }
-
+private fun LoginCardWithButton(onLoginClick: (Pair<String, String>) -> Unit) {
+	val userState: MutableState<String> = mutableStateOf<String>("")
+	val passwordState: MutableState<String> = mutableStateOf<String>("")
 	Column(
 		modifier = Modifier.padding(all = 10.dp),
 		horizontalAlignment = Alignment.CenterHorizontally,
 		verticalArrangement = Arrangement.Center
 	) {
-
-		LoginCard {
-			userNamePassword = it
-		}
+		LoginCard(username = userState, password = passwordState)
 		Button(
 			onClick = {
-				onLoginClick.invoke(userNamePassword)
+				onLoginClick.invoke(Pair(userState.value, passwordState.value))
 			},
 			modifier = Modifier
 				.wrapContentSize()
@@ -100,8 +93,7 @@ private fun LoginCardWithButton(onLoginClick : (Pair<String,String>) -> Unit) {
 }
 
 @Composable
-private fun LoginCard(modifier: Modifier = Modifier, credential : (Pair<String,String>) -> Unit) {
-	val userNamePassword :  Pair<String,String> = Pair("john","1234")
+private fun LoginCard(modifier: Modifier = Modifier, username: MutableState<String>, password: MutableState<String>) {
 	Card(
 		modifier = modifier
 			.padding(all = 10.dp)
@@ -110,12 +102,12 @@ private fun LoginCard(modifier: Modifier = Modifier, credential : (Pair<String,S
 		Column(
 			modifier = Modifier.padding(all = 10.dp)
 		) {
-			InputBox(text = "Enter Username", value = userNamePassword.first, onValueChange = {
-				credential.invoke(userNamePassword.copy(first = it))
+			InputBox(text = "Enter Username", value = username.value, onValueChange = {
+				username.value = it
 			})
 
-			InputBox(text = "Enter Password", value = userNamePassword.second, onValueChange = {
-				credential.invoke(userNamePassword.copy(second = it))
+			InputBox(text = "Enter Password", value = password.value, onValueChange = {
+				password.value = it
 			})
 		}
 	}
@@ -141,7 +133,8 @@ private fun InputBox(
 			.fillMaxWidth()
 			.padding(horizontal = 16.dp, vertical = 8.dp),
 		label = { Text(text) },
-		singleLine = true
+		singleLine = true,
+		enabled = true
 	)
 }
 
