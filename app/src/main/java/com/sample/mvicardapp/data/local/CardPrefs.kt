@@ -40,6 +40,4 @@ class CardPrefs @Inject constructor(context : Context) {
 	private object PrefKeys{
 		val KEY_CARD_LIST = stringPreferencesKey("key_card_list")
 	}
-
-
 }

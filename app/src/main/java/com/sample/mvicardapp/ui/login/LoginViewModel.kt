@@ -10,9 +10,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -30,7 +32,6 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
 	private val repository: LoginRepository
 ) : ViewModel() {
-
 	val loginIntent = Channel<LoginIntent>(Channel.UNLIMITED)
 
 	init {
@@ -50,16 +51,27 @@ class LoginViewModel @Inject constructor(
 	private val _loginStateFlow = MutableStateFlow<LoginState?>(null)
 	val loginStateFlow = _loginStateFlow.asStateFlow()
 	private fun login(userName: String, password: String) {
+		println("login called")
 		viewModelScope.launch {
-			_loginStateFlow.emit(LoginState.Loading)
-			withContext(Dispatchers.IO) {
-				repository.login(userName, password).also { response ->
-					when (response) {
-						is Success -> _loginStateFlow.emit(LoginState.ResultUserDetail(response.value.user.toUser()))
-						is Error -> _loginStateFlow.emit(LoginState.ResultError(response.message.orEmpty()))
+			if (userName.isEmpty() || password.isEmpty()) {
+				_loginStateFlow.emit(LoginState.ResultError("Please enter valid credential"))
+			} else {
+				_loginStateFlow.emit(LoginState.Loading)
+				withContext(Dispatchers.IO) {
+					repository.login(userName, password).also { response ->
+						when (response) {
+							is Success -> _loginStateFlow.emit(LoginState.ResultUserDetail(response.value.user.toUser()))
+							is Error -> _loginStateFlow.emit(LoginState.ResultError(response.message.orEmpty()))
+						}
 					}
 				}
 			}
+		}
+	}
+
+	fun clearLoginState() {
+		viewModelScope.launch {
+			_loginStateFlow.emit(null)
 		}
 	}
 }
