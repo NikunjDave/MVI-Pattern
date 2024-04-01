@@ -4,6 +4,7 @@ import android.content.Context
 import com.google.gson.GsonBuilder
 import com.sample.mvicardapp.data.LogInApi
 import com.sample.mvicardapp.data.remote.ApiInterceptor
+import com.sample.mvicardapp.data.remote.ResultCallAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,6 +33,7 @@ object AppModule {
 		return Retrofit.Builder()
 			.baseUrl("https://google.com")
 			.addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
+			.addCallAdapterFactory(ResultCallAdapterFactory())
 			.client(okHttpClient)
 			.build()
 

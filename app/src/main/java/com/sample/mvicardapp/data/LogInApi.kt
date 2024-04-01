@@ -1,9 +1,10 @@
 package com.sample.mvicardapp.data
 
 import com.sample.mvicardapp.data.dto.LoginResponse
+import com.sample.mvicardapp.utils.Result
 import retrofit2.http.GET
 
 interface LogInApi {
 	@GET("/login")
-	suspend fun login(): LoginResponse
+	suspend fun login(): Result<LoginResponse>
 }
