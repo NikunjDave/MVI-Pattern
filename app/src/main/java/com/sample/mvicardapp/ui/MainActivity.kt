@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() {
 							},
 							actions = {
 								IconButton(onClick = {
-									navController.navigateUp()
+									navController.navigate("checkout")
 								}) {
 									Icon(
 										imageVector = Icons.Filled.ShoppingCart,
@@ -100,6 +100,9 @@ class MainActivity : ComponentActivity() {
 			}
 			composable(route = "card_list") {
 				CardListScreen()
+			}
+			composable(route = "checkout") {
+				CheckoutScreen()
 			}
 		}
 	}

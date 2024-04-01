@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sample.mvicardapp.data.local.CardPrefs
 import com.sample.mvicardapp.domain.CardRepository
+import com.sample.mvicardapp.domain.SelectedCard
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,6 +37,9 @@ class CardViewModel @Inject constructor(
 			cardIntent.consumeAsFlow().collect {
 				when (it) {
 					is CardIntent.FetchCard -> fetchCardList()
+					is CardIntent.SelectCard -> {
+						SelectedCard.card = it.card
+					}
 				}
 			}
 		}

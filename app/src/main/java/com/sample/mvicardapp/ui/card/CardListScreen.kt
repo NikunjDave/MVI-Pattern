@@ -33,7 +33,7 @@ import kotlinx.coroutines.launch
  */
 
 @Composable
-fun  CardListScreen(){
+fun CardListScreen() {
 	val cardViewModel: CardViewModel = hiltViewModel()
 	val cardState = cardViewModel.cardStateFlow.collectAsState()
 	val coroutineScope = rememberCoroutineScope()
@@ -49,7 +49,11 @@ fun  CardListScreen(){
 
 			is CardState.ResultCardList -> {
 				CardList(cards = (cardState.value as CardState.ResultCardList).cards, onCardClick = {
-				})}
+					coroutineScope.launch {
+						cardViewModel.cardIntent.send(CardIntent.SelectCard(it))
+					}
+				})
+			}
 
 			is CardState.ResultError -> {
 				println("Error : ${(cardState.value as CardState.ResultError).error}")
@@ -62,21 +66,21 @@ fun  CardListScreen(){
 }
 
 @Composable
-fun CardList(cards: List<CardDetail>,onCardClick : (Int) -> Unit) {
+fun CardList(cards: List<CardDetail>, onCardClick: (CardDetail) -> Unit) {
 	LazyColumn(modifier = Modifier.padding(bottom = 56.dp), content = {
 		items(cards) { card ->
-			CardRow(card,onCardClick)
+			CardRow(card, onCardClick)
 		}
 	})
 }
 
 @Composable
-private fun CardRow(card: CardDetail,onCardClick : (Int) -> Unit) {
+private fun CardRow(card: CardDetail, onCardClick: (CardDetail) -> Unit) {
 	Card(
 		modifier = Modifier
 			.padding(all = 10.dp)
 			.fillMaxWidth()
-			.clickable { onCardClick(card.id) }
+			.clickable { onCardClick(card) }
 	) {
 		Column(modifier = Modifier.padding(all = 10.dp)) {
 			Text(
