@@ -1,4 +1,4 @@
-package com.sample.mvicardapp.data
+package com.sample.mvicardapp.data.remote
 
 import com.sample.mvicardapp.data.dto.LoginResponse
 import com.sample.mvicardapp.utils.Result

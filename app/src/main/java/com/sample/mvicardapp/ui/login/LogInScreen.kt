@@ -43,7 +43,6 @@ fun LoginScreen(onLoginSuccess :() -> Unit) {
 			}
 
 			is LoginState.ResultUserDetail -> {
-				println("user  called")
 				Toast.makeText(
 					LocalContext.current,
 					"user is ${(loginState.value as LoginState.ResultUserDetail).data.fullName}",

@@ -1,6 +1,8 @@
 package com.sample.mvicardapp.di
 
+import com.sample.mvicardapp.data.CardRepositoryImpl
 import com.sample.mvicardapp.data.LoginRepositoryImpl
+import com.sample.mvicardapp.domain.CardRepository
 import com.sample.mvicardapp.domain.LoginRepository
 import dagger.Binds
 import dagger.Module
@@ -25,4 +27,10 @@ abstract class LoginRepositoryModule {
 	abstract fun bindLoginRepository(
 		loginRepositoryImpl: LoginRepositoryImpl
 	): LoginRepository
+
+	@Binds
+	@Singleton
+	abstract fun bindCardRepository(
+		cardRepositoryImpl: CardRepositoryImpl
+	): CardRepository
 }

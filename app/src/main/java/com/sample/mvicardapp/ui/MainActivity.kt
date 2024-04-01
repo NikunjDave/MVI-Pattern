@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -52,13 +53,13 @@ class MainActivity : ComponentActivity() {
 							),
 							title = {
 								Text(
-									"TaskApp",
+									"CardApp",
 									maxLines = 1,
 									overflow = TextOverflow.Ellipsis
 								)
 							},
 							navigationIcon = {
-								IconButton(onClick = { /* do something */ }) {
+								IconButton(onClick = { navController.navigateUp() }) {
 									Icon(
 										imageVector = Icons.Filled.ArrowBack,
 										contentDescription = "Localized description"
@@ -70,7 +71,7 @@ class MainActivity : ComponentActivity() {
 									navController.navigateUp()
 								}) {
 									Icon(
-										imageVector = Icons.Filled.Menu,
+										imageVector = Icons.Filled.ShoppingCart,
 										contentDescription = "Localized description"
 									)
 								}

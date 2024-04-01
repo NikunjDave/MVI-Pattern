@@ -2,7 +2,8 @@ package com.sample.mvicardapp.di
 
 import android.content.Context
 import com.google.gson.GsonBuilder
-import com.sample.mvicardapp.data.LogInApi
+import com.sample.mvicardapp.data.remote.LogInApi
+import com.sample.mvicardapp.data.local.CardPrefs
 import com.sample.mvicardapp.data.remote.ApiInterceptor
 import com.sample.mvicardapp.data.remote.ResultCallAdapterFactory
 import dagger.Module
@@ -43,5 +44,9 @@ object AppModule {
 	fun loginApi(retrofit: Retrofit): LogInApi {
 		return retrofit.create(LogInApi::class.java)
 	}
+
+	@Provides
+	@Singleton
+	fun cardPrefs(@ApplicationContext appContext: Context) : CardPrefs = CardPrefs(appContext)
 }
 
