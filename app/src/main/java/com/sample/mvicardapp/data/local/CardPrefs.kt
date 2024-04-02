@@ -1,14 +1,17 @@
 package com.sample.mvicardapp.data.local
 
 import android.content.Context
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.sample.mvicardapp.data.local.CardPrefs.PrefKeys.KEY_CARD_LIST
+import com.sample.mvicardapp.data.local.CardPrefs.PrefKeys.KEY_USER_LOGGED_IN
 import com.sample.mvicardapp.domain.model.CardDetail
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 /***
@@ -37,8 +40,15 @@ class CardPrefs @Inject constructor(context : Context) {
 		return Gson().fromJson(jsonString, type)
 	}
 
+	suspend fun setUserLoggedIn(isLoggedIn: Boolean){
+		prefs.edit { it[KEY_USER_LOGGED_IN] = isLoggedIn }
+	}
+
+	val userLoginFlow = prefs.data.map { it[KEY_USER_LOGGED_IN]  }
+
 	private object PrefKeys{
 		val KEY_CARD_LIST = stringPreferencesKey("key_card_list")
+		val KEY_USER_LOGGED_IN = booleanPreferencesKey("key_login")
 	}
 
 

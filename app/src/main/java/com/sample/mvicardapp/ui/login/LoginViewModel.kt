@@ -5,6 +5,7 @@ import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.sample.mvicardapp.data.dto.toUser
+import com.sample.mvicardapp.data.local.CardPrefs
 import com.sample.mvicardapp.domain.LoginRepository
 import com.sample.mvicardapp.utils.Error
 import com.sample.mvicardapp.utils.Success
@@ -12,6 +13,8 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -26,6 +29,7 @@ import kotlinx.coroutines.withContext
 
 class LoginViewModel @AssistedInject constructor(
 	@Assisted private val loginState: LoginState,
+	private val prefs : CardPrefs,
 	private val repository: LoginRepository,
 ) : MavericksViewModel<LoginState>(loginState) {
 	fun login(userName: String, password: String) {
@@ -57,6 +61,8 @@ class LoginViewModel @AssistedInject constructor(
 			}
 		}
 	}
+
+	val isLoggedInFlow = prefs.userLoginFlow.stateIn(viewModelScope, SharingStarted.WhileSubscribed(),false)
 
 	fun resetLoginState() {
 		setState {

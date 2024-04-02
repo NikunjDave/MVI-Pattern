@@ -1,5 +1,6 @@
 package com.sample.mvicardapp.ui.card
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -44,6 +46,7 @@ fun CardListScreen() {
 		cardViewModel.cardIntent.send(CardIntent.FetchCard)
 	}
 	Box(modifier = Modifier) {
+		val context = LocalContext.current
 		when {
 			cardState.value.isLoading -> CircularProgressIndicator(
 				modifier = Modifier.align(Alignment.Center)
@@ -54,6 +57,10 @@ fun CardListScreen() {
 					coroutineScope.launch {
 						cardViewModel.cardIntent.send(CardIntent.SelectCard(it))
 					}
+					Toast.makeText(
+						context, "Card Selected",
+						Toast.LENGTH_SHORT
+					).show()
 				})
 			}
 

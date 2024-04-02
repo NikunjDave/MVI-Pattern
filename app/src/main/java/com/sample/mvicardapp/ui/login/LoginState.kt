@@ -17,11 +17,3 @@ data class LoginState(
 	val userDetail : User? = null,
 	val error : String = ""
 ) : MavericksState
-/*
-{
-
-	object Loading : LoginState()
-	data class ResultUserDetail(val data : User) : LoginState()
-
-	data class ResultError(val error : String) : LoginState()
-}*/
