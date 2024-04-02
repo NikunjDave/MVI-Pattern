@@ -3,6 +3,7 @@ package com.sample.mvicardapp.ui.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sample.mvicardapp.data.dto.toUser
+import com.sample.mvicardapp.data.local.CardPrefs
 import com.sample.mvicardapp.domain.LoginRepository
 import com.sample.mvicardapp.utils.Error
 import com.sample.mvicardapp.utils.Success
@@ -30,7 +31,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-	private val repository: LoginRepository
+	private val repository: LoginRepository,
+	private val cardPrefs : CardPrefs
 ) : ViewModel() {
 	val loginIntent = Channel<LoginIntent>(Channel.UNLIMITED)
 
@@ -68,6 +70,8 @@ class LoginViewModel @Inject constructor(
 			}
 		}
 	}
+
+	val isLoggedInFlow = cardPrefs.userLoginFlow.stateIn(viewModelScope, SharingStarted.WhileSubscribed(),false)
 
 	fun clearLoginState() {
 		viewModelScope.launch {

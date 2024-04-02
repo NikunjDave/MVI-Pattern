@@ -23,6 +23,7 @@ class LoginRepositoryImpl @Inject constructor(private val logInApi: LogInApi, pr
 		return logInApi.login().also { result ->
 			(result as? Success)?.let { loginResponse ->
 				prefs.saveCards(loginResponse.value.user.cards.map { it.toCardDetail() })
+				prefs.setUserLoggedIn(true)
 			}
 		}
 	}

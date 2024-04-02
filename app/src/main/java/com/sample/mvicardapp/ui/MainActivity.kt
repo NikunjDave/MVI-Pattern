@@ -19,17 +19,19 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.NavOptions
-import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.sample.mvicardapp.ui.card.CardListScreen
 import com.sample.mvicardapp.ui.login.LoginScreen
+import com.sample.mvicardapp.ui.login.LoginViewModel
 import com.sample.mvicardapp.ui.theme.MviCardAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -91,7 +93,10 @@ class MainActivity : ComponentActivity() {
 
 	@Composable
 	 fun CardApp(navController: NavHostController) {
-		NavHost(navController = navController, startDestination = "login") {
+		val loginViewModel: LoginViewModel = hiltViewModel()
+		val isLoggedIn by loginViewModel.isLoggedInFlow.collectAsState()
+		val startScreen = if (isLoggedIn == true) "card_list" else "login"
+		NavHost(navController = navController, startDestination = startScreen) {
 			// list of nodes
 			composable(route = "login") {
 				LoginScreen {
